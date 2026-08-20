@@ -1,0 +1,740 @@
+/* ============================================================
+   Наталья Васильева — основной сайт, версия 2
+   Палитра и шрифты: NV/design/nv-brand-colors-fonts.md
+   ============================================================ */
+
+/* ---------- Tokens ---------- */
+:root {
+  /* Brand — Тиффани
+     Внимание: брендовый #08938e даёт всего 3.6:1 на светлом фоне и 3.8:1 под белым
+     текстом — мелкий текст на нём не проходит WCAG AA. Поэтому для ТЕКСТА и для
+     фонов под белым текстом используем затемнённый вариант той же гаммы (--teal-dark),
+     а яркий #0abab5 и брендовый #08938e оставляем только для декора. */
+  --teal:            #0abab5;   /* декор: линии, точки, маркеры. НЕ для текста */
+  --teal-brand:      #08938e;   /* брендовый — декор/градиенты. НЕ для мелкого текста */
+  --teal-dark:       #0a7570;   /* текст на светлом (5.3:1) и фон под белым (5.5:1) */
+  --teal-soft:       #c8e7e7;
+
+  /* Brand — тёмная гамма */
+  --green-900:       #1d3a38;
+  --green-700:       #2b514e;
+  --green-300:       #8fa9a7;
+  --green-100:       #ccdedc;
+
+  /* Backgrounds */
+  --bg:              #fafafa;
+  --bg-white:        #ffffff;
+  --bg-tint:         #f5f9f9;
+  --bg-tint-2:       #f2fbfb;
+  --bg-taupe:        #f6f1ee;
+
+  /* Text */
+  --ink:             #1d3a38;   /* заголовки, основной текст — 11.7:1 */
+  --ink-2:           #4a615f;   /* вторичный текст   — 6.3:1 */
+  --ink-3:           #5c716f;   /* мелкий текст      — 4.9:1 */
+  --on-dark:         #ffffff;
+  --on-dark-2:       #ccdedc;
+  --on-dark-3:       #8fa9a7;
+
+  /* Lines */
+  --line:            #e2e9e8;
+  --line-strong:     #cfdbda;
+  --line-dark:       #33514e;
+
+  /* Layout */
+  --wrap:            1180px;
+  --radius:          14px;
+  --radius-lg:       22px;
+
+  /* Motion */
+  --ease:            cubic-bezier(.2, .7, .3, 1);
+  --dur:             220ms;
+
+  /* Elevation */
+  --sh-1: 0 1px 2px rgba(29,58,56,.05), 0 4px 14px rgba(29,58,56,.05);
+  --sh-2: 0 2px 6px rgba(29,58,56,.06), 0 14px 40px rgba(29,58,56,.09);
+  --sh-3: 0 30px 70px rgba(29,58,56,.16);
+}
+
+/* ---------- Reset ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+* { margin: 0; }
+
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'Aptos', 'Inter', 'Helvetica Neue', Arial, sans-serif;
+  font-size: 17px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+img, svg { display: block; max-width: 100%; }
+h1, h2 { font-family: 'Montserrat', 'Helvetica Neue', Arial, sans-serif; font-weight: 700; line-height: 1.14; letter-spacing: -.015em; }
+/* h3 — часто в две строки, нужен воздух между строками */
+h3 { font-family: 'Montserrat', 'Helvetica Neue', Arial, sans-serif; font-weight: 700; line-height: 1.3; letter-spacing: -.015em; }
+a { color: var(--teal-dark); text-decoration: none; }
+ul, ol { list-style: none; padding: 0; }
+::selection { background: var(--teal-soft); color: var(--green-900); }
+
+/* Focus — видимый для клавиатуры */
+:focus-visible {
+  outline: 3px solid var(--teal-dark);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+.skip-link {
+  position: absolute; left: 50%; top: -100px; transform: translateX(-50%);
+  z-index: 200; background: var(--green-900); color: #fff;
+  padding: 12px 22px; border-radius: 0 0 10px 10px; font-weight: 600;
+  transition: top var(--dur) var(--ease);
+}
+.skip-link:focus { top: 0; }
+
+.wrap { width: 100%; max-width: var(--wrap); margin-inline: auto; padding-inline: 24px; }
+
+/* ============================================================
+   HEADER
+   ============================================================ */
+.site-header {
+  position: fixed; inset: 0 0 auto 0; z-index: 100;
+  background: rgba(250, 250, 250, 0);
+  transition: background var(--dur) var(--ease), box-shadow var(--dur) var(--ease),
+              border-color var(--dur) var(--ease);
+  border-bottom: 1px solid transparent;
+}
+.site-header.is-stuck {
+  background: rgba(250, 250, 250, .88);
+  backdrop-filter: saturate(180%) blur(14px);
+  -webkit-backdrop-filter: saturate(180%) blur(14px);
+  border-bottom-color: var(--line);
+  box-shadow: 0 1px 20px rgba(29,58,56,.05);
+}
+
+.header-inner {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 24px; min-height: 74px;
+}
+
+.brand { display: flex; flex-direction: column; color: var(--ink); line-height: 1.25; }
+.brand-name {
+  font-family: 'Montserrat', sans-serif; font-weight: 700;
+  font-size: 16px; letter-spacing: -.01em;
+}
+.brand-role {
+  font-size: 11px; color: var(--ink-2); letter-spacing: .08em;
+  text-transform: uppercase; font-weight: 500;
+}
+
+.nav { display: flex; align-items: center; gap: 6px; }
+.nav a {
+  position: relative; color: var(--ink); font-size: 15px; font-weight: 500;
+  padding: 10px 14px; border-radius: 8px;
+  transition: color var(--dur) var(--ease), background var(--dur) var(--ease);
+}
+.nav a:not(.nav-cta)::after {
+  content: ''; position: absolute; left: 14px; right: 14px; bottom: 4px;
+  height: 1.5px; background: var(--teal); border-radius: 2px;
+  transform: scaleX(0); transform-origin: left;
+  transition: transform var(--dur) var(--ease);
+}
+.nav a:not(.nav-cta):hover { color: var(--teal-dark); }
+.nav a:not(.nav-cta):hover::after { transform: scaleX(1); }
+
+.nav-cta {
+  margin-left: 10px; background: var(--green-900); color: #fff !important;
+  padding: 11px 20px !important; border-radius: 999px; font-weight: 600;
+  transition: background var(--dur) var(--ease), transform var(--dur) var(--ease);
+}
+.nav-cta:hover { background: var(--teal-dark); transform: translateY(-1px); }
+
+.burger {
+  display: none; width: 46px; height: 46px; align-items: center; justify-content: center;
+  background: transparent; border: 1px solid var(--line-strong); border-radius: 10px;
+  color: var(--ink); cursor: pointer;
+}
+.burger svg { width: 24px; height: 24px; }
+.burger path { transition: transform 260ms var(--ease), opacity 160ms var(--ease); transform-origin: center; }
+.burger[aria-expanded="true"] .burger-top { transform: translateY(5px) rotate(45deg); }
+.burger[aria-expanded="true"] .burger-mid { opacity: 0; }
+.burger[aria-expanded="true"] .burger-bot { transform: translateY(-5px) rotate(-45deg); }
+
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+  min-height: 48px; padding: 13px 26px; border-radius: 999px;
+  font-family: 'Montserrat', sans-serif; font-weight: 600; font-size: 15px;
+  cursor: pointer; border: 1.5px solid transparent; white-space: nowrap;
+  transition: background var(--dur) var(--ease), color var(--dur) var(--ease),
+              border-color var(--dur) var(--ease), transform var(--dur) var(--ease),
+              box-shadow var(--dur) var(--ease);
+}
+.btn svg { width: 18px; height: 18px; flex: none; }
+.btn-lg { min-height: 56px; padding: 16px 32px; font-size: 16px; }
+
+.btn-primary { background: var(--green-900); color: #fff; box-shadow: var(--sh-1); }
+.btn-primary:hover { background: var(--teal-dark); transform: translateY(-2px); box-shadow: var(--sh-2); }
+.btn-primary:active { transform: translateY(0); }
+
+.btn-ghost { background: transparent; color: var(--ink); border-color: var(--line-strong); }
+.btn-ghost:hover { border-color: var(--teal); color: var(--teal-dark); background: var(--bg-tint-2); }
+.btn-ghost svg { transition: transform var(--dur) var(--ease); }
+.btn-ghost:hover svg { transform: translateY(2px); }
+
+.btn-outline { background: transparent; color: var(--ink); border-color: var(--line-strong); }
+.btn-outline:hover { border-color: var(--teal-dark); color: var(--teal-dark); background: #fff; transform: translateY(-2px); }
+.btn-outline svg { transition: transform var(--dur) var(--ease); }
+.btn-outline:hover svg { transform: translateX(3px); }
+
+/* ============================================================
+   SECTION PRIMITIVES
+   ============================================================ */
+.section { padding: 104px 0; }
+
+.section-head { max-width: 660px; }
+.section-head.center { margin-inline: auto; text-align: center; }
+
+.kicker {
+  display: inline-flex; align-items: center; gap: 9px;
+  font-size: 12px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--teal-dark); margin-bottom: 18px;
+}
+.kicker::before {
+  content: ''; width: 22px; height: 1.5px; background: var(--teal); border-radius: 2px;
+}
+.section-head.center .kicker::after {
+  content: ''; width: 22px; height: 1.5px; background: var(--teal); border-radius: 2px;
+}
+.kicker-light { color: var(--teal-soft); }
+.kicker-light::before, .kicker-light::after { background: var(--teal); }
+
+.section-title { font-size: clamp(30px, 4.2vw, 46px); color: var(--ink); }
+.section-sub { margin-top: 20px; font-size: 18px; color: var(--ink-2); max-width: 62ch; }
+.section-head.center .section-sub { margin-inline: auto; }
+
+/* ============================================================
+   ЭКРАН 1 — HERO
+   ============================================================ */
+.hero { padding-top: 74px; background: var(--bg); }
+
+.hero-title {
+  padding-top: 84px;
+  font-size: clamp(31px, 4.9vw, 60px);
+  letter-spacing: -.025em; line-height: 1.16; color: var(--ink);
+}
+.hero-title::after {
+  content: ''; display: block; width: 68px; height: 3px;
+  background: var(--teal); border-radius: 3px; margin-top: 32px;
+}
+
+.hero-grid {
+  display: grid; grid-template-columns: 1.1fr .9fr; gap: 72px; align-items: center;
+  padding-top: 40px; padding-bottom: 96px;
+}
+
+.hero-lede {
+  font-size: 19px; line-height: 1.7; color: var(--ink-2);
+  max-width: 40em;
+}
+
+/* Подпись — имя и роль */
+.signature {
+  margin-top: 36px; padding-left: 22px;
+  border-left: 3px solid var(--teal); border-radius: 2px;
+}
+.signature-name {
+  font-family: 'Montserrat', sans-serif; font-weight: 700;
+  font-size: 19px; letter-spacing: -.01em; color: var(--green-900);
+}
+.signature-role {
+  margin-top: 6px; font-size: 15.5px; line-height: 1.55; color: var(--ink-3);
+}
+
+.hero-actions { margin-top: 38px; display: flex; flex-wrap: wrap; gap: 14px; }
+
+/* Фото */
+.hero-media { position: relative; justify-self: end; width: 100%; max-width: 420px; }
+
+.hero-shape {
+  position: absolute; inset: auto -20px -20px auto;
+  width: 64%; height: 52%;
+  background: linear-gradient(140deg, var(--teal) 0%, var(--teal-brand) 100%);
+  border-radius: var(--radius-lg);
+  opacity: .14;
+}
+.hero-photo {
+  position: relative;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--sh-3);
+  background: var(--bg-tint);
+}
+.hero-photo img {
+  width: 100%; height: 100%;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  object-position: center 22%;   /* держим лицо в кадре */
+}
+
+/* ============================================================
+   ЭКРАН 2 — ОБО МНЕ
+   ============================================================ */
+.about { background: var(--bg-white); border-top: 1px solid var(--line); }
+.about-grid {
+  display: grid; grid-template-columns: 1fr 1.15fr; gap: 72px; align-items: start;
+}
+.about-body p + p { margin-top: 20px; }
+.about-body .lead { font-size: 20px; line-height: 1.6; color: var(--ink); font-weight: 500; }
+.about-body p { color: var(--ink-2); }
+
+/* Факты-акценты */
+.facts {
+  margin-top: 76px; padding-top: 44px; border-top: 1px solid var(--line);
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px 40px;
+}
+.fact { position: relative; padding-left: 26px; }
+.fact::before {
+  content: ''; position: absolute; left: 0; top: 6px; bottom: 6px;
+  width: 2px; background: var(--teal); border-radius: 2px; opacity: .35;
+}
+.fact-num {
+  display: block;
+  font-family: 'Montserrat', sans-serif; font-weight: 700;
+  font-size: clamp(38px, 4.4vw, 52px); line-height: 1.05; color: var(--green-900);
+  letter-spacing: -.03em; font-variant-numeric: tabular-nums;
+}
+.fact-num-sm { font-size: clamp(26px, 2.6vw, 32px); letter-spacing: -.02em; }
+.fact-suffix { color: var(--teal-dark); }
+.fact-label {
+  display: block; margin-top: 12px; font-size: 15px; line-height: 1.5; color: var(--ink-2);
+  max-width: 30ch;
+}
+
+/* Профессиональная опора */
+.foundation {
+  margin-top: 44px; padding: 20px 26px;
+  display: flex; align-items: baseline; flex-wrap: wrap; gap: 8px 20px;
+  background: var(--bg-tint); border: 1px solid var(--line); border-radius: var(--radius);
+}
+.foundation-label {
+  font-size: 11px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--ink-3);
+}
+.foundation-items {
+  font-family: 'Montserrat', sans-serif; font-weight: 600; font-size: 16px;
+  color: var(--green-900); letter-spacing: .01em;
+}
+
+/* ============================================================
+   ЭКРАН 3 — НАПРАВЛЕНИЯ
+   ============================================================ */
+.directions { background: var(--bg); }
+
+.dir-cards {
+  margin-top: 68px;
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 26px;
+}
+.dir-card {
+  display: flex; flex-direction: column;
+  background: var(--bg-white); border: 1px solid var(--line); border-radius: var(--radius-lg);
+  padding: 40px 38px;
+  transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease),
+              border-color var(--dur) var(--ease);
+}
+.dir-card:hover { transform: translateY(-4px); box-shadow: var(--sh-2); border-color: var(--teal-soft); }
+.dir-card-alt { background: var(--bg-tint-2); border-color: var(--teal-soft); }
+
+.dir-icon {
+  width: 54px; height: 54px; border-radius: 15px;
+  display: grid; place-items: center; margin-bottom: 26px;
+  background: var(--bg-tint-2); border: 1px solid var(--teal-soft); color: var(--teal-dark);
+  transition: background var(--dur) var(--ease), color var(--dur) var(--ease),
+              border-color var(--dur) var(--ease);
+}
+.dir-card-alt .dir-icon { background: #fff; }
+.dir-card:hover .dir-icon { background: var(--teal-dark); color: #fff; border-color: var(--teal-dark); }
+.dir-icon svg { width: 26px; height: 26px; }
+
+.dir-title { font-size: 24px; color: var(--green-900); letter-spacing: -.02em; }
+.dir-text { margin-top: 16px; margin-bottom: 24px; font-size: 16.5px; color: var(--ink-2); }
+
+.dir-result {
+  margin-top: auto; padding-top: 22px; border-top: 1px solid var(--line);
+  font-size: 16px; color: var(--ink);
+}
+.dir-card-alt .dir-result { border-top-color: var(--teal-soft); }
+.dir-result-label {
+  display: block; margin-bottom: 6px;
+  font-size: 11px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--teal-dark);
+}
+
+.dir-link {
+  margin-top: 26px; align-self: flex-start;
+  display: inline-flex; align-items: center; gap: 10px;
+  font-family: 'Montserrat', sans-serif; font-weight: 600; font-size: 15px;
+  color: var(--teal-dark);
+}
+.dir-link svg { width: 18px; height: 18px; transition: transform var(--dur) var(--ease); }
+.dir-link:hover svg { transform: translateX(4px); }
+
+/* ============================================================
+   ЭКРАН 4 — BUSINESS & COMMERCIAL GROWTH
+   ============================================================ */
+.business { background: var(--bg-white); border-block: 1px solid var(--line); }
+
+.needs-intro {
+  margin-top: 44px; font-size: 17px; font-weight: 600; color: var(--ink);
+}
+.needs {
+  margin-top: 22px;
+  display: grid; grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(3, auto);
+  grid-auto-flow: column; gap: 2px 40px;
+}
+.need {
+  position: relative; padding: 16px 18px 16px 40px;
+  font-size: 16.5px; color: var(--ink); border-radius: var(--radius);
+  border: 1px solid transparent;
+  transition: background var(--dur) var(--ease), border-color var(--dur) var(--ease);
+}
+.need:hover { background: var(--bg-tint); border-color: var(--line); }
+.need::before {
+  content: ''; position: absolute; left: 18px; top: 26px;
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--teal); box-shadow: 0 0 0 4px rgba(10,186,181,.14);
+}
+
+.pull {
+  margin-top: 48px; padding: 4px 0 4px 30px;
+  border-left: 3px solid var(--teal);
+  font-family: 'Montserrat', sans-serif; font-weight: 600;
+  font-size: 20px; line-height: 1.55; color: var(--green-900);
+  letter-spacing: -.005em; max-width: 62ch;
+}
+
+.focus {
+  margin-top: 48px; padding: 28px 32px;
+  background: var(--bg-taupe); border: 1px solid #eadfd8; border-radius: var(--radius-lg);
+}
+.focus-label {
+  font-size: 11px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--ink-3); margin-bottom: 16px;
+}
+.focus-tags { display: flex; flex-wrap: wrap; gap: 10px; }
+.focus-tags li {
+  font-family: 'Montserrat', sans-serif; font-weight: 600; font-size: 15px;
+  color: var(--green-900); background: #fff; border: 1px solid #e6dad2;
+  border-radius: 999px; padding: 9px 18px;
+}
+
+/* ============================================================
+   ЭКРАН 5 — ОПЫТ
+   ============================================================ */
+.cases { background: var(--bg); }
+
+.case-cards {
+  margin-top: 68px;
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 26px;
+}
+.case {
+  background: var(--bg-white); border: 1px solid var(--line); border-radius: var(--radius-lg);
+  padding: 36px 32px;
+  transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease),
+              border-color var(--dur) var(--ease);
+}
+.case:hover { transform: translateY(-4px); box-shadow: var(--sh-2); border-color: var(--teal-soft); }
+.case-num {
+  display: block; margin-bottom: 20px;
+  font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 13px;
+  letter-spacing: .12em; color: var(--teal-dark);
+  font-variant-numeric: tabular-nums;
+}
+.case-title { font-size: 21px; color: var(--green-900); letter-spacing: -.015em; }
+.case-text { margin-top: 14px; font-size: 16px; color: var(--ink-2); }
+
+.cases-action { margin-top: 44px; display: flex; justify-content: center; }
+
+/* ============================================================
+   ЭКРАН 6 — ДОВЕРЯЯ СВОЕЙ ПРИРОДЕ (тёмная)
+   ============================================================ */
+.personal { background: var(--green-900); color: var(--on-dark-2); }
+.personal .section-title { color: #fff; font-size: clamp(28px, 3.4vw, 38px); }
+
+.personal-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 72px; align-items: start;
+}
+.personal-lede {
+  margin-top: 28px; font-size: 18px; line-height: 1.7; color: var(--on-dark-2);
+  max-width: 48ch;
+}
+
+.signals-title {
+  font-family: 'Montserrat', sans-serif; font-weight: 600; font-size: 16px;
+  color: #fff; margin-bottom: 20px;
+}
+.signals { display: flex; flex-direction: column; gap: 2px; }
+.signal {
+  display: flex; align-items: flex-start; gap: 16px;
+  padding: 18px 20px; border-radius: var(--radius);
+  font-size: 17px; color: var(--on-dark-2);
+  border: 1px solid transparent;
+  transition: background var(--dur) var(--ease), border-color var(--dur) var(--ease),
+              transform var(--dur) var(--ease);
+}
+.signal:hover {
+  background: rgba(255,255,255,.04); border-color: var(--line-dark);
+  transform: translateX(4px);
+}
+.signal-mark {
+  flex: none; margin-top: 10px;
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--teal); box-shadow: 0 0 0 4px rgba(10,186,181,.18);
+}
+
+/* ============================================================
+   ЭКРАН 7 — ХОЛИСТИЧЕСКИЙ ПОДХОД
+   ============================================================ */
+.holistic { background: var(--bg-white); border-bottom: 1px solid var(--line); }
+
+.holistic-cards {
+  margin-top: 60px;
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px;
+}
+.hol-card {
+  background: var(--bg-tint); border: 1px solid var(--line); border-radius: var(--radius-lg);
+  padding: 36px 34px;
+}
+.hol-title {
+  font-size: 13px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--teal-dark); padding-bottom: 18px; margin-bottom: 18px;
+  border-bottom: 1px solid var(--line-strong);
+}
+.hol-text { font-size: 17px; color: var(--ink); }
+
+/* ============================================================
+   ЭКРАН 8 — БИОГРАФИЯ (плейсхолдер)
+   ============================================================ */
+.bio { background: var(--bg); padding: 84px 0; }
+.bio-block {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 40px; flex-wrap: wrap;
+  background: var(--bg-tint); border: 1px dashed var(--line-strong);
+  border-radius: var(--radius-lg); padding: 40px 44px;
+}
+.bio-copy { max-width: 62ch; }
+.bio-title {
+  font-family: 'Montserrat', sans-serif; font-weight: 700;
+  font-size: 24px; line-height: 1.3; letter-spacing: -.015em; color: var(--green-900);
+}
+.bio-text { margin-top: 12px; font-size: 16px; color: var(--ink-2); }
+
+/* ============================================================
+   ЭКРАН 9 — ИДЕИ И ПУБЛИКАЦИИ
+   ============================================================ */
+.writing { background: var(--bg); padding-top: 20px; }
+.writing .section-title { margin-top: 4px; }
+.writing-grid {
+  display: grid; grid-template-columns: 1fr 1.05fr; gap: 72px; align-items: center;
+}
+
+.links { display: flex; flex-direction: column; gap: 12px; }
+.link-card {
+  display: flex; align-items: center; gap: 18px;
+  background: var(--bg-white); border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 22px 26px; color: var(--ink);
+  transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease),
+              border-color var(--dur) var(--ease);
+}
+.link-card:hover { transform: translateX(4px); box-shadow: var(--sh-1); border-color: var(--teal-soft); }
+.link-kind {
+  flex: none;
+  font-size: 11px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--teal-dark); background: var(--bg-tint-2);
+  border: 1px solid var(--teal-soft); border-radius: 999px; padding: 6px 14px;
+}
+.link-title {
+  font-family: 'Montserrat', sans-serif; font-weight: 600; font-size: 17px;
+  color: var(--green-900); letter-spacing: -.01em;
+}
+.link-arrow {
+  width: 20px; height: 20px; margin-left: auto; flex: none; color: var(--teal-dark);
+  transition: transform var(--dur) var(--ease);
+}
+.link-card:hover .link-arrow { transform: translateX(4px); }
+
+/* ============================================================
+   ЭКРАН 10 — ПРИГЛАШЕНИЕ
+   ============================================================ */
+.contact {
+  background: radial-gradient(120% 100% at 50% 0%, var(--bg-tint-2) 0%, var(--bg) 62%);
+  border-top: 1px solid var(--line);
+  text-align: center;
+}
+.contact-inner { max-width: 700px; }
+.contact .kicker { justify-content: center; }
+.contact .kicker::after {
+  content: ''; width: 22px; height: 1.5px; background: var(--teal); border-radius: 2px;
+}
+.contact-title {
+  font-family: 'Montserrat', sans-serif; font-weight: 700; line-height: 1.14;
+  font-size: clamp(30px, 4.4vw, 48px); color: var(--ink); letter-spacing: -.02em;
+}
+.contact-text {
+  margin-top: 22px; font-size: 18px; color: var(--ink-2); margin-inline: auto; max-width: 54ch;
+}
+.contact-text-2 { margin-top: 14px; }
+.contact-actions {
+  margin-top: 38px; display: flex; flex-wrap: wrap; gap: 14px; justify-content: center;
+}
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+.site-footer { background: var(--green-900); color: var(--on-dark-3); padding: 52px 0 44px; }
+.footer-inner {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 28px; flex-wrap: wrap;
+}
+.footer-brand { display: flex; flex-direction: column; gap: 4px; }
+.footer-name {
+  font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 17px; color: #fff;
+}
+.footer-tag { font-size: 13px; color: var(--on-dark-3); }
+
+.footer-nav { display: flex; flex-wrap: wrap; gap: 8px 26px; }
+.footer-nav a {
+  color: var(--on-dark-2); font-size: 15px;
+  transition: color var(--dur) var(--ease);
+}
+.footer-nav a:hover { color: var(--teal); }
+
+.footer-note {
+  width: 100%; padding-top: 28px; margin-top: 4px;
+  border-top: 1px solid var(--line-dark);
+  font-size: 13px; color: var(--on-dark-3);
+}
+
+/* ============================================================
+   REVEAL ON SCROLL
+   ============================================================ */
+/* Прячем только если JS жив и умеет вернуть контент.
+   Без JS (или при ошибке) .reveal остаётся видимым. */
+.js .reveal {
+  opacity: 0; transform: translateY(18px);
+  transition: opacity 620ms var(--ease), transform 620ms var(--ease);
+  transition-delay: calc(var(--d, 0) * 80ms);
+}
+.js .reveal.is-in { opacity: 1; transform: none; }
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 1024px) {
+  .hero-grid { gap: 44px; }
+  .hero-media { max-width: 340px; }
+  .about-grid, .writing-grid, .personal-grid { grid-template-columns: 1fr; gap: 44px; }
+  .dir-cards, .holistic-cards { grid-template-columns: 1fr; }
+  .case-cards { grid-template-columns: 1fr; }
+  .facts { grid-template-columns: 1fr; gap: 30px; }
+  .fact-label { max-width: none; }
+}
+
+@media (max-width: 860px) {
+  /* Мобильное меню */
+  .burger { display: inline-flex; }
+
+  .nav {
+    position: fixed; inset: 74px 0 auto 0;
+    flex-direction: column; align-items: stretch; gap: 2px;
+    background: rgba(250,250,250,.97);
+    backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--line);
+    padding: 16px 24px 26px;
+    box-shadow: 0 20px 40px rgba(29,58,56,.1);
+
+    opacity: 0; visibility: hidden; transform: translateY(-10px);
+    transition: opacity 200ms var(--ease), transform 200ms var(--ease), visibility 200ms;
+  }
+  .nav.is-open { opacity: 1; visibility: visible; transform: none; }
+  .nav a { padding: 15px 8px; font-size: 17px; border-bottom: 1px solid var(--line); border-radius: 0; }
+  .nav a:not(.nav-cta)::after { display: none; }
+  .nav-cta {
+    margin-left: 0; margin-top: 16px; text-align: center;
+    border-bottom: 0 !important; padding: 15px 20px !important;
+  }
+
+  /* Hero → в колонку */
+  .hero-grid {
+    grid-template-columns: 1fr; gap: 40px;
+    padding-top: 48px; padding-bottom: 64px;
+  }
+  .hero-media { order: -1; justify-self: start; max-width: 320px; }
+  .hero-shape { display: none; }
+  .hero-title { padding-top: 52px; }
+  .hero-title::after { margin-top: 24px; }
+
+  .needs {
+    grid-template-columns: 1fr; grid-template-rows: none; grid-auto-flow: row;
+  }
+}
+
+@media (max-width: 560px) {
+  body { font-size: 16px; }
+  .section { padding: 72px 0; }
+  .wrap { padding-inline: 20px; }
+
+  /* На узком экране роль в шапке уезжала во вторую строку и ломала высоту 74px */
+  .brand-role { display: none; }
+
+  .hero-lede { font-size: 17px; }
+  .hero-media { justify-self: stretch; max-width: none; }
+  .hero-photo img { aspect-ratio: 4 / 5; }
+  .hero-actions { flex-direction: column; align-items: stretch; }
+  .btn { width: 100%; }
+
+  .about-body .lead { font-size: 18px; }
+  .facts { margin-top: 56px; padding-top: 36px; }
+  .foundation { padding: 18px 20px; }
+
+  .dir-card { padding: 30px 24px; }
+  .dir-title { font-size: 21px; }
+
+  .need { padding: 14px 12px 14px 34px; font-size: 16px; }
+  .need::before { left: 12px; top: 23px; }
+  .pull { font-size: 18px; padding-left: 20px; }
+  .focus { padding: 24px 20px; }
+
+  .case { padding: 30px 24px; }
+  .signal { padding: 14px 12px; font-size: 16px; }
+  .hol-card { padding: 28px 22px; }
+
+  .bio-block { padding: 30px 24px; }
+  .bio-title { font-size: 21px; }
+
+  .link-card { flex-wrap: wrap; gap: 12px 14px; padding: 20px; }
+  .link-arrow { margin-left: 0; }
+
+  .contact-actions { flex-direction: column; }
+  .footer-inner { flex-direction: column; align-items: flex-start; gap: 22px; }
+}
+
+/* ============================================================
+   REDUCED MOTION
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .js .reveal { opacity: 1 !important; transform: none !important; }
+}
