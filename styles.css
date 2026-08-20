@@ -251,7 +251,11 @@ ul, ol { list-style: none; padding: 0; }
   background: var(--teal); border-radius: 3px; margin-top: 28px;
 }
 
-.hero-copy { grid-area: copy; padding-top: 30px; }
+.hero-copy {
+  grid-area: copy;
+  /* текст, подпись и кнопки прижаты к низу — нижний край совпадает с краем фото */
+  align-self: end;
+}
 
 .hero-lede {
   font-size: 19px; line-height: 1.7; color: var(--ink-2);
@@ -656,6 +660,9 @@ ul, ol { list-style: none; padding: 0; }
 @media (max-width: 1024px) {
   .hero-grid { grid-template-columns: 1fr 360px; column-gap: 44px; padding-top: 76px; }
   .hero-media { max-width: 360px; }
+  /* здесь текст уже не помещается рядом с фото — прижимать его к низу нечем,
+     иначе он наползает на заголовок */
+  .hero-copy { align-self: start; padding-top: 28px; }
   .about-grid, .writing-grid, .personal-grid { grid-template-columns: 1fr; gap: 44px; }
   .dir-cards, .holistic-cards { grid-template-columns: 1fr; }
   .case-cards { grid-template-columns: 1fr; }
