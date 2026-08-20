@@ -225,20 +225,33 @@ ul, ol { list-style: none; padding: 0; }
    ============================================================ */
 .hero { padding-top: 74px; background: var(--bg); }
 
+/* Заголовок и фото — соседние ячейки первой строки: их верхние края совпадают */
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1fr 480px;
+  grid-template-areas:
+    "title photo"
+    "copy  photo";
+  /* высокое фото растягивало обе строки — первая строка строго по заголовку */
+  grid-template-rows: min-content 1fr;
+  column-gap: 64px; align-items: start;
+  padding-top: 92px; padding-bottom: 96px;
+}
+
 .hero-title {
-  padding-top: 84px;
-  font-size: clamp(31px, 4.9vw, 60px);
-  letter-spacing: -.025em; line-height: 1.16; color: var(--ink);
+  grid-area: title;
+  font-size: clamp(26px, 2.8vw, 38px);
+  letter-spacing: -.02em; line-height: 1.2; color: var(--ink);
+  /* line-height приподнимает первую строку — компенсируем, чтобы буквы
+     встали ровно по верхнему краю фотографии */
+  margin-top: -.16em;
 }
 .hero-title::after {
   content: ''; display: block; width: 68px; height: 3px;
-  background: var(--teal); border-radius: 3px; margin-top: 32px;
+  background: var(--teal); border-radius: 3px; margin-top: 28px;
 }
 
-.hero-grid {
-  display: grid; grid-template-columns: 1.1fr .9fr; gap: 72px; align-items: center;
-  padding-top: 40px; padding-bottom: 96px;
-}
+.hero-copy { grid-area: copy; padding-top: 30px; }
 
 .hero-lede {
   font-size: 19px; line-height: 1.7; color: var(--ink-2);
@@ -261,7 +274,10 @@ ul, ol { list-style: none; padding: 0; }
 .hero-actions { margin-top: 38px; display: flex; flex-wrap: wrap; gap: 14px; }
 
 /* Фото */
-.hero-media { position: relative; justify-self: end; width: 100%; max-width: 420px; }
+.hero-media {
+  grid-area: photo; position: relative; justify-self: end;
+  width: 100%; max-width: 480px;
+}
 
 .hero-shape {
   position: absolute; inset: auto -20px -20px auto;
@@ -638,8 +654,8 @@ ul, ol { list-style: none; padding: 0; }
    RESPONSIVE
    ============================================================ */
 @media (max-width: 1024px) {
-  .hero-grid { gap: 44px; }
-  .hero-media { max-width: 340px; }
+  .hero-grid { grid-template-columns: 1fr 360px; column-gap: 44px; padding-top: 76px; }
+  .hero-media { max-width: 360px; }
   .about-grid, .writing-grid, .personal-grid { grid-template-columns: 1fr; gap: 44px; }
   .dir-cards, .holistic-cards { grid-template-columns: 1fr; }
   .case-cards { grid-template-columns: 1fr; }
@@ -671,15 +687,18 @@ ul, ol { list-style: none; padding: 0; }
     border-bottom: 0 !important; padding: 15px 20px !important;
   }
 
-  /* Hero → в колонку */
+  /* Hero → в колонку: заголовок, фото, текст */
   .hero-grid {
-    grid-template-columns: 1fr; gap: 40px;
-    padding-top: 48px; padding-bottom: 64px;
+    grid-template-columns: 1fr;
+    grid-template-areas: "title" "photo" "copy";
+    row-gap: 36px;
+    padding-top: 60px; padding-bottom: 64px;
   }
-  .hero-media { order: -1; justify-self: start; max-width: 320px; }
+  .hero-media { justify-self: start; max-width: 320px; }
   .hero-shape { display: none; }
-  .hero-title { padding-top: 52px; }
+  .hero-title { margin-top: 0; }
   .hero-title::after { margin-top: 24px; }
+  .hero-copy { padding-top: 0; }
 
   .needs {
     grid-template-columns: 1fr; grid-template-rows: none; grid-auto-flow: row;
