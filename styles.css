@@ -76,8 +76,8 @@ body {
 
 img, svg { display: block; max-width: 100%; }
 h1, h2 { font-family: 'Montserrat', 'Helvetica Neue', Arial, sans-serif; font-weight: 700; line-height: 1.14; letter-spacing: -.015em; }
-/* h3 — часто в две строки, нужен воздух между строками */
-h3 { font-family: 'Montserrat', 'Helvetica Neue', Arial, sans-serif; font-weight: 700; line-height: 1.3; letter-spacing: -.015em; }
+/* h3, h4 — часто в две строки, нужен воздух между строками */
+h3, h4 { font-family: 'Montserrat', 'Helvetica Neue', Arial, sans-serif; font-weight: 700; line-height: 1.3; letter-spacing: -.015em; }
 a { color: var(--teal-dark); text-decoration: none; }
 ul, ol { list-style: none; padding: 0; }
 ::selection { background: var(--teal-soft); color: var(--green-900); }
@@ -213,10 +213,17 @@ ul, ol { list-style: none; padding: 0; }
 .section-head.center .kicker::after {
   content: ''; width: 22px; height: 1.5px; background: var(--teal); border-radius: 2px;
 }
-.kicker-light { color: var(--teal-soft); }
-.kicker-light::before, .kicker-light::after { background: var(--teal); }
 
-.section-title { font-size: clamp(30px, 4.2vw, 46px); color: var(--ink); }
+/* Разделитель без текста — тот же штрих, что рисуют ::before/::after у кикера.
+   Ставится там, где кикер не нужен, а отбивка над заголовком нужна. */
+.section-mark {
+  display: block; width: 64px; height: 2px;
+  background: var(--teal); border-radius: 2px;
+  margin-bottom: 22px;
+}
+.section-head.center .section-mark { margin-inline: auto; }
+
+.section-title { font-size: clamp(30px, 4.2vw, 46px); line-height: 1.14; color: var(--ink); }
 .section-sub { margin-top: 20px; font-size: 18px; color: var(--ink-2); max-width: 62ch; }
 .section-head.center .section-sub { margin-inline: auto; }
 
@@ -392,59 +399,178 @@ ul, ol { list-style: none; padding: 0; }
 .dir-link:hover svg { transform: translateX(4px); }
 
 /* ============================================================
-   ЭКРАН 4 — BUSINESS & COMMERCIAL GROWTH
+   НАПРАВЛЕНИЯ — две главы по два экрана
+   Каждая глава открывается своим заголовком и держит один фон
+   на оба экрана: при скролле видно, в каком направлении читатель.
    ============================================================ */
-.business { background: var(--bg-white); border-block: 1px solid var(--line); }
+.direction { padding-bottom: 104px; }
 
-.needs-intro {
-  margin-top: 44px; font-size: 17px; font-weight: 600; color: var(--ink);
+.direction-head { padding-top: 104px; }
+.direction-title {
+  font-size: clamp(32px, 4.6vw, 48px);
+  line-height: 1.12; letter-spacing: -.025em; color: var(--ink);
 }
-.needs {
-  margin-top: 22px;
-  display: grid; grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(3, auto);
-  grid-auto-flow: column; gap: 2px 40px;
+.direction-title::after {
+  content: ''; display: block; width: 68px; height: 3px;
+  background: var(--teal); border-radius: 3px; margin-top: 30px;
 }
+
+/* Экраны внутри главы: фон и отбивки задаёт глава */
+.direction .section { padding: 88px 0 0; background: none; border: 0; }
+
+/* Заголовок экрана подчинён заголовку главы — и по смыслу, и по кеглю.
+   Разрыв большой: в каждой главе два экрана под одним заголовком, и главным
+   должен читаться только он. Одна величина на обе главы — они парные. */
+.direction .section-title { font-size: clamp(21px, 2.5vw, 28px); }
+
+/* ---------- Глава 1: бизнес ---------- */
+.direction-business {
+  background: var(--bg-white);
+  border-block: 1px solid var(--line);
+}
+/* карточки кейсов были белыми на сером — на белом фоне нужен другой оттенок */
+.direction-business .case { background: var(--bg-tint); }
+
+/* ---------- Глава 2: личная работа, тёмная ---------- */
+.direction-personal {
+  background: var(--green-900);
+  color: var(--on-dark-2);
+}
+.direction-personal .direction-title,
+.direction-personal .section-title { color: #fff; }
+.direction-personal .section-sub { color: var(--on-dark-2); }
+.direction-personal .kicker { color: var(--teal-soft); }
+
+.direction-personal .hol-card {
+  background: rgba(255, 255, 255, .04);
+  border-color: var(--line-dark);
+}
+.direction-personal .hol-title {
+  color: var(--teal-soft);
+  border-bottom-color: var(--line-dark);
+}
+.direction-personal .hol-text { color: var(--on-dark-2); }
+
+/* ---------- Подсветки: открывают и закрывают тёмную главу ----------
+   Два мягких круга по диагонали: верхний левый у начала экрана 6, нижний
+   правый у конца экрана 7 — вместе они держат главу как одно целое.
+   Радиальный градиент, а не blur(): фильтр на таком размере заметно
+   грузит скролл, а градиент даёт ту же мягкую границу бесплатно. */
+.direction-personal { position: relative; z-index: 0; overflow: hidden; }
+/* z-index на главе создаёт контекст наложения: без него круги с z-index:-1
+   ушли бы за её собственный фон и стали не видны */
+.section.holistic { position: relative; }
+
+.direction-personal::before,
+.section.holistic::after {
+  content: '';
+  position: absolute;
+  z-index: -1;             /* под текстом, но поверх фона главы */
+  pointer-events: none;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle at center,
+    rgba(10, 186, 181, .17) 0%,
+    rgba(10, 186, 181, .07) 45%,
+    transparent 72%);
+}
+
+/* Верхний круг привязан к самой главе, а не к экрану 6: у экрана верхняя
+   граница проходит под заголовком главы, и круг не доставал бы до верха.
+   Ровно −50 % по обеим осям — центр приходится на угол, и в главу попадает
+   одинаковая четверть круга: он одинаково касается левой и верхней границы. */
+.direction-personal::before {
+  top: 0; left: 0;
+  transform: translate(-50%, -50%);
+  width: clamp(500px, 60vw, 960px);
+  /* Верхний круг заметнее нижнего: он открывает главу и принимает на себя
+     переход от светлого фона предыдущей главы к тёмному */
+  background: radial-gradient(circle at center,
+    rgba(10, 186, 181, .26) 0%,
+    rgba(10, 186, 181, .11) 45%,
+    transparent 72%);
+}
+
+/* Нижний круг остаётся на экране 7: его низ и есть конец содержания главы.
+   Сдвиг меньше 50 % — внутрь попадает чуть больше четверти. */
+.section.holistic::after {
+  right: 0; bottom: 0;
+  transform: translate(42%, 38%);
+  width: clamp(320px, 40vw, 620px);
+}
+
+/* ============================================================
+   ЭКРАН 4 — BUSINESS & COMMERCIAL GROWTH
+   Раскладка повторяет экран 6: слева заголовок с подводкой, справа
+   список в блоке. Цвета — свои, светлые: глава идёт по белому фону.
+   ============================================================ */
+/* stretch, а не start: левая колонка тянется на высоту правой, и «Особый
+   профессиональный фокус» можно прижать к её низу — тогда нижние края
+   обоих блоков сходятся в одну линию. */
+.business-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 72px; align-items: stretch;
+}
+.business-head { display: flex; flex-direction: column; }
+.business-lede {
+  margin-top: 28px; font-size: 18px; line-height: 1.7; color: var(--ink-2);
+  max-width: 48ch;
+  /* нижний отступ держит минимальный зазор до .focus: margin-top: auto
+     у него схлопывается в ноль, когда свободного места нет (одна колонка
+     на узком экране) — и без этого блоки слиплись бы */
+  margin-bottom: 40px;
+}
+
+/* Список лежит в блоке с подложкой темнее фона главы — тот же приём, что
+   у .personal-body, только глава светлая, поэтому подложка не светлее,
+   а темнее. Оттенок взят у карточек кейсов этой же главы. */
+.business-body {
+  background: var(--bg-tint);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: 32px 34px;
+}
+
+.needs-title {
+  font-family: 'Montserrat', sans-serif; font-weight: 600; font-size: 18px;
+  color: var(--ink);
+  padding-bottom: 12px; margin-bottom: 0;
+}
+
+/* Пункты идут плотно и без наведения: это перечисление, а не ссылки */
+.needs { display: flex; flex-direction: column; }
 .need {
-  position: relative; padding: 16px 18px 16px 40px;
-  font-size: 16.5px; color: var(--ink); border-radius: var(--radius);
-  border: 1px solid transparent;
-  transition: background var(--dur) var(--ease), border-color var(--dur) var(--ease);
+  display: flex; align-items: flex-start; gap: 16px;
+  padding: 9px 0 0;
+  font-size: 17px; line-height: 1.45; color: var(--ink);
 }
-.need:hover { background: var(--bg-tint); border-color: var(--line); }
-.need::before {
-  content: ''; position: absolute; left: 18px; top: 26px;
-  width: 8px; height: 8px; border-radius: 50%;
+.need:first-child { padding-top: 4px; }
+.need-mark {
+  flex: none; margin-top: 9px;
+  width: 7px; height: 7px; border-radius: 50%;
   background: var(--teal); box-shadow: 0 0 0 4px rgba(10,186,181,.14);
 }
 
-.pull {
-  margin-top: 48px; padding: 4px 0 4px 30px;
-  border-left: 3px solid var(--teal);
-  font-family: 'Montserrat', sans-serif; font-weight: 600;
-  font-size: 20px; line-height: 1.55; color: var(--green-900);
-  letter-spacing: -.005em; max-width: 62ch;
-}
-
+/* Блок компактнее прежнего: он ушёл вниз колонки и работает как подпись,
+   а не как самостоятельная карточка — крупные поля ему больше не нужны. */
 .focus {
-  margin-top: 48px; padding: 28px 32px;
+  margin-top: auto;   /* прижать к низу колонки */
+  padding: 20px 24px;
   background: var(--bg-taupe); border: 1px solid #eadfd8; border-radius: var(--radius-lg);
 }
 .focus-label {
   font-size: 11px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase;
-  color: var(--ink-3); margin-bottom: 16px;
+  color: var(--ink-3); margin-bottom: 12px;
 }
-.focus-tags { display: flex; flex-wrap: wrap; gap: 10px; }
+.focus-tags { display: flex; flex-wrap: wrap; gap: 8px; }
 .focus-tags li {
-  font-family: 'Montserrat', sans-serif; font-weight: 600; font-size: 15px;
+  font-family: 'Montserrat', sans-serif; font-weight: 600; font-size: 14px;
   color: var(--green-900); background: #fff; border: 1px solid #e6dad2;
-  border-radius: 999px; padding: 9px 18px;
+  border-radius: 999px; padding: 7px 15px;
 }
 
 /* ============================================================
    ЭКРАН 5 — ОПЫТ
    ============================================================ */
-.cases { background: var(--bg); }
-
 .case-cards {
   margin-top: 68px;
   display: grid; grid-template-columns: repeat(3, 1fr); gap: 26px;
@@ -470,8 +596,6 @@ ul, ol { list-style: none; padding: 0; }
 /* ============================================================
    ЭКРАН 6 — ДОВЕРЯЯ СВОЕЙ ПРИРОДЕ (тёмная)
    ============================================================ */
-.personal { background: var(--green-900); color: var(--on-dark-2); }
-.personal .section-title { color: #fff; font-size: clamp(28px, 3.4vw, 38px); }
 
 .personal-grid {
   display: grid; grid-template-columns: 1fr 1fr; gap: 72px; align-items: start;
@@ -481,25 +605,47 @@ ul, ol { list-style: none; padding: 0; }
   max-width: 48ch;
 }
 
-.signals-title {
-  font-family: 'Montserrat', sans-serif; font-weight: 600; font-size: 16px;
-  color: #fff; margin-bottom: 20px;
+/* Список лежит в блоке с подложкой светлее фона главы. Тон взят на ступень
+   темнее --green-700 — ближе к фону главы, карточка отделяется мягче. */
+.personal-body {
+  background: #244542;
+  border: 1px solid var(--line-dark);
+  border-radius: var(--radius-lg);
+  padding: 32px 34px;
+  /* Тень той же формы, что у фото в первом экране: смещена вправо и вниз,
+     мягкая, плюс короткая контактная. Цвет — бирюза подсветок, а не тёмный:
+     на --green-900 тёмная тень не читается (у фото она написана
+     в rgba(29,58,56) — это и есть фон главы, на нём вышел бы ноль),
+     а светлая работает как отсвет и держит карточку той же гаммой.
+     Цвет — #085551, глубже всей бирюзовой шкалы палитры: тень не спорит
+     с подсветками по яркости. Он всё ещё чуть светлее фона главы, поэтому
+     работает как отсвет, но чем темнее тон, тем слабее он на тёмном фоне —
+     отсюда альфа заметно выше, чем у бирюзы --teal в подсветках.
+     Два слоя с большим отрицательным spread вместо одного плотного:
+     spread уводит яркое ядро под карточку, поэтому у самой границы свет
+     приглушён, а разные радиусы дают растянутое затухание наружу.
+     Короткой контактной тени нет — она давала ободок по краю. */
+  box-shadow:
+    30px 36px 100px -30px rgba(8, 85, 81, .57),
+    46px 56px 180px -24px rgba(8, 85, 81, .43);
 }
-.signals { display: flex; flex-direction: column; gap: 2px; }
+
+.signals-title {
+  font-family: 'Montserrat', sans-serif; font-weight: 600; font-size: 18px;
+  color: #fff;
+  padding-bottom: 12px; margin-bottom: 0;
+}
+
+/* Пункты идут плотно и без наведения: это перечисление, а не ссылки */
+.signals { display: flex; flex-direction: column; }
 .signal {
   display: flex; align-items: flex-start; gap: 16px;
-  padding: 18px 20px; border-radius: var(--radius);
-  font-size: 17px; color: var(--on-dark-2);
-  border: 1px solid transparent;
-  transition: background var(--dur) var(--ease), border-color var(--dur) var(--ease),
-              transform var(--dur) var(--ease);
+  padding: 9px 0 0;
+  font-size: 17px; line-height: 1.45; color: var(--on-dark-2);
 }
-.signal:hover {
-  background: rgba(255,255,255,.04); border-color: var(--line-dark);
-  transform: translateX(4px);
-}
+.signal:first-child { padding-top: 4px; }
 .signal-mark {
-  flex: none; margin-top: 10px;
+  flex: none; margin-top: 9px;
   width: 7px; height: 7px; border-radius: 50%;
   background: var(--teal); box-shadow: 0 0 0 4px rgba(10,186,181,.18);
 }
@@ -507,7 +653,59 @@ ul, ol { list-style: none; padding: 0; }
 /* ============================================================
    ЭКРАН 7 — ХОЛИСТИЧЕСКИЙ ПОДХОД
    ============================================================ */
-.holistic { background: var(--bg-white); border-bottom: 1px solid var(--line); }
+/* Экрану 7 нужно больше воздуха сверху и снизу, чем общей отбивке главы:
+   он закрывает главу, и карточки не должны упираться в её нижний край.
+   Верхняя отбивка задана падингом, а не маржином разделителя: падинг не
+   схлопывается наружу секции, а маржин ушёл бы за её пределы. */
+.direction .section.holistic,
+.direction .section.cases { padding: 104px 0 112px; }
+
+/* Разделитель вынесен из .section-head и стоит между экранами.
+   Сверху 104 px, снизу 76 px — не поровну: сверху он граничит с жёстким
+   нижним краем карточки, снизу — с заголовком, у которого своя внутренняя
+   выключка над капителью. Равные числа читались бы как сдвиг вверх. */
+.holistic > .wrap > .section-mark,
+.cases > .wrap > .section-mark { margin: 0 auto 76px; }
+
+/* Блок шапки занимает всю ширину, текст внутри — 65 % от ширины пары
+   карточек и стоит по центру */
+.holistic .section-head { max-width: 65%; }
+/* у section-sub свой предел в 62ch — он обрезал бы эти 65 % */
+.holistic .section-sub { max-width: none; }
+
+/* Подчёркивание от руки. Штрих — не border и не text-decoration, а инлайновый
+   SVG под фразой: только так линия может гулять по высоте и идти в два прохода,
+   как настоящий росчерк. Растягивается по реальной ширине фразы, поэтому
+   правка текста не требует подгонки рисунка. nowrap держит фразу в одной
+   строке — разорванную переносом одним росчерком не подчеркнуть. */
+.underlined { position: relative; display: inline-block; white-space: nowrap; }
+.underline-pen {
+  position: absolute;
+  /* Привязка к низу строчного бокса: 1.65 интерлиньяжа оставляют под базовой
+     линией лишний воздух, и штрих без сдвига висел бы слишком низко.
+     Размер задан явно: SVG — заменяемый элемент, при width:auto он берёт
+     размер по умолчанию (300 px) и игнорирует противоположную привязку. */
+  /* Полоса ниже строчного бокса: второй штрих должен уйти под него,
+     иначе двум линиям не хватает места и они сливаются в одну. */
+  bottom: -0.12em; left: -0.28em;
+  width: calc(100% + 0.56em);
+  height: 0.60em;
+  /* небольшой выступ за края фразы: росчерк начинается и кончается мимо букв */
+  overflow: visible;          /* линия выходит за viewBox на половину толщины */
+  pointer-events: none;       /* не мешает выделять текст */
+  fill: none;
+  stroke: var(--teal-brand);
+  stroke-width: 2.4px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+/* Второй проход: рука редко попадает в ту же линию дважды. Он короче и
+   чуть слабее первого, но именно он говорит, что это росчерк, а не ссылка:
+   одинарная линия под текстом читается как подчёркивание гиперссылки. */
+.underline-pen__second { opacity: .8; }
+/* preserveAspectRatio="none" растягивает штрих по ширине фразы и вместе с ним
+   растянул бы линию — при такой разнице масштабов она поплыла бы по толщине.
+   non-scaling-stroke (атрибут на path) держит толщину одинаковой. */
 
 .holistic-cards {
   margin-top: 60px;
@@ -645,8 +843,12 @@ ul, ol { list-style: none; padding: 0; }
 @media (max-width: 1024px) {
   .hero-grid { grid-template-columns: 1fr 360px; column-gap: 44px; padding-top: 76px; }
   .hero-media { max-width: 360px; }
-  .about-grid, .writing-grid, .personal-grid { grid-template-columns: 1fr; gap: 44px; }
-  .dir-cards, .holistic-cards { grid-template-columns: 1fr; }
+  .about-grid, .writing-grid, .personal-grid, .business-grid { grid-template-columns: 1fr; gap: 44px; }
+  .dir-cards { grid-template-columns: 1fr; }
+  .holistic-cards { grid-template-columns: 1fr; }
+  /* 65 % шапки считались от ширины пары карточек — с одной колонкой
+     этой опоры нет, и узкая колонка текста рвала бы строки */
+  .holistic .section-head { max-width: none; }
   .case-cards { grid-template-columns: 1fr; }
   .facts { grid-template-columns: 1fr; gap: 30px; }
   .fact-label { max-width: none; }
@@ -699,6 +901,17 @@ ul, ol { list-style: none; padding: 0; }
 @media (max-width: 560px) {
   body { font-size: 16px; }
   .section { padding: 72px 0; }
+
+  /* отбивки глав тоже сжимаются, иначе на телефоне слишком много воздуха */
+  .direction { padding-bottom: 72px; }
+  .direction-head { padding-top: 72px; }
+  .direction .section { padding-top: 60px; }
+  /* на телефоне промежуток сжимается, но пропорция сверху/снизу сохраняется */
+  .direction .section.holistic,
+  .direction .section.cases { padding: 72px 0 68px; }
+  .holistic > .wrap > .section-mark,
+  .cases > .wrap > .section-mark { margin-bottom: 52px; }
+  .direction-title::after { margin-top: 24px; }
   .wrap { padding-inline: 20px; }
 
   /* На узком экране роль в шапке уезжала во вторую строку и ломала высоту 74px */
@@ -719,11 +932,11 @@ ul, ol { list-style: none; padding: 0; }
 
   .need { padding: 14px 12px 14px 34px; font-size: 16px; }
   .need::before { left: 12px; top: 23px; }
-  .pull { font-size: 18px; padding-left: 20px; }
   .focus { padding: 24px 20px; }
 
   .case { padding: 30px 24px; }
-  .signal { padding: 14px 12px; font-size: 16px; }
+  .personal-body, .business-body { padding: 24px 22px; }
+  .signal { font-size: 16px; }
   .hol-card { padding: 28px 22px; }
 
   .bio-block { padding: 30px 24px; }
