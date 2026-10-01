@@ -300,12 +300,40 @@ ul, ol { list-style: none; padding: 0; }
    ЭКРАН 2 — ОБО МНЕ
    ============================================================ */
 .about { background: var(--bg-white); border-top: 1px solid var(--line); }
+
+/* Кикер стоит в отдельной строке сетки, заголовок и текст — во второй:
+   так заголовок начинается вровень с первым абзацем. Отступ кикер →
+   заголовок держит его собственный margin-bottom, поэтому row-gap: 0. */
 .about-grid {
-  display: grid; grid-template-columns: 1fr 1.15fr; gap: 72px; align-items: start;
+  display: grid; grid-template-columns: 1fr 1.15fr;
+  column-gap: 72px; row-gap: 0; align-items: start;
 }
-.about-body p + p { margin-top: 20px; }
-.about-body .lead { font-size: 20px; line-height: 1.6; color: var(--ink); font-weight: 500; }
+.about-grid .kicker { grid-column: 1; grid-row: 1; justify-self: start; }
+.about-grid .section-title {
+  grid-column: 1; grid-row: 2; max-width: 660px;
+  /* подъём на глаз: крупный кегль должен сидеть чуть выше строки текста,
+     чтобы казаться вровень с ней */
+  margin-top: -10px;
+  /* 4.1vw, а не общие 4.2vw: иначе около 1100px «взгляд» срывается
+     на вторую строку и первая строка остаётся без выносных элементов */
+  font-size: clamp(30px, 4.1vw, 46px);
+}
+
+.about-body { grid-column: 2; grid-row: 2; }
 .about-body p { color: var(--ink-2); }
+.about-body p + p { margin-top: 20px; }
+
+/* Акцентный абзац: бирюзовая линейка, как у подписи в первом экране
+   (.signature), плюс светлая подложка. Слева угол почти прямой, чтобы
+   заливка не отходила от линейки; справа — обычный радиус. */
+.about-body .about-highlight {
+  margin-top: 32px;
+  padding: 24px 28px 24px 24px;
+  border-left: 3px solid var(--teal);
+  border-radius: 2px var(--radius) var(--radius) 2px;
+  background: var(--bg-tint-2);
+  color: var(--ink);
+}
 
 /* Факты-акценты */
 .facts {
@@ -333,7 +361,10 @@ ul, ol { list-style: none; padding: 0; }
 /* Профессиональная опора */
 .foundation {
   margin-top: 44px; padding: 20px 26px;
-  display: flex; align-items: baseline; flex-wrap: wrap; gap: 8px 20px;
+  /* Колонки разведены заметно шире строк: подпись «Профессиональная опора»
+     должна читаться как отдельная метка, а не как начало перечисления.
+     На узком экране блок переносится и такой зазор уже не нужен. */
+  display: flex; align-items: baseline; flex-wrap: wrap; gap: 8px 90px;
   background: var(--bg-tint); border: 1px solid var(--line); border-radius: var(--radius);
 }
 .foundation-label {
@@ -843,7 +874,16 @@ ul, ol { list-style: none; padding: 0; }
 @media (max-width: 1024px) {
   .hero-grid { grid-template-columns: 1fr 360px; column-gap: 44px; padding-top: 76px; }
   .hero-media { max-width: 360px; }
-  .about-grid, .writing-grid, .personal-grid, .business-grid { grid-template-columns: 1fr; gap: 44px; }
+  .writing-grid, .personal-grid, .business-grid { grid-template-columns: 1fr; gap: 44px; }
+  /* одна колонка: расстановка по строкам не нужна, отбивку до текста
+     возвращаем отступом — row-gap здесь нулевой. Выравнивать заголовок
+     больше не с чем, подъём снимаем. */
+  .about-grid { grid-template-columns: 1fr; column-gap: 44px; }
+  .about-grid .kicker,
+  .about-grid .section-title,
+  .about-body { grid-column: 1; grid-row: auto; }
+  .about-grid .section-title { margin-top: 0; }
+  .about-body { margin-top: 44px; }
   .dir-cards { grid-template-columns: 1fr; }
   .holistic-cards { grid-template-columns: 1fr; }
   /* 65 % шапки считались от ширины пары карточек — с одной колонкой
@@ -923,9 +963,8 @@ ul, ol { list-style: none; padding: 0; }
   .hero-actions { flex-direction: column; align-items: stretch; }
   .btn { width: 100%; }
 
-  .about-body .lead { font-size: 18px; }
   .facts { margin-top: 56px; padding-top: 36px; }
-  .foundation { padding: 18px 20px; }
+  .foundation { padding: 18px 20px; gap: 8px 20px; }
 
   .dir-card { padding: 30px 24px; }
   .dir-title { font-size: 21px; }
@@ -936,6 +975,7 @@ ul, ol { list-style: none; padding: 0; }
 
   .case { padding: 30px 24px; }
   .personal-body, .business-body { padding: 24px 22px; }
+  .about-body .about-highlight { margin-top: 24px; padding: 20px 20px 20px 19px; }
   .signal { font-size: 16px; }
   .hol-card { padding: 28px 22px; }
 
